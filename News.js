@@ -6,7 +6,8 @@ export class News extends Component {
     super();
     this.state ={
       articles: [],
-      loading:false
+      loading:false,
+      page:1
 }
     }
     async componentDidMount(){
@@ -14,10 +15,38 @@ export class News extends Component {
       let data = await fetch(url);
       let parsedData = await data.json()
       console.log(parsedData);
-      this.setState({articles: parsedData.articles})
+      this.setState({articles: parsedData.articles, totalResults:parsedData.totalResults})
 
     }
-  
+    handlePrevClick = async()=>{
+ let url = `https://newsapi.org/v2/everything?q=tesla&from=2025-04-14&sortBy=publishedAt&apiKey=acf0b6af7c414e35a13bd9ba97e253bf&page${this.state.page - 1}&pageSize=20`;
+      let data = await fetch(url);
+      let parsedData = await data.json()
+      console.log(parsedData);
+      this.setState({articles: parsedData.articles})
+
+      this.setState({
+        page: this.state.page-1,
+        articles: parsedData.articles
+      })
+    }
+  handleNextClick = async ()=>{
+    if(this.stage.page +1 > Math.ceil(this.state.totalResults/20)){
+
+    }else
+{
+    let url = `https://newsapi.org/v2/everything?q=tesla&from=2025-04-14&sortBy=publishedAt&apiKey=acf0b6af7c414e35a13bd9ba97e253bf&page=${this.state.page + 1}&pageSize=20`;
+      let data = await fetch(url);
+      let parsedData = await data.json()
+      console.log(parsedData);
+      this.setState({articles: parsedData.articles})
+
+      this.setState({
+        page: this.state.page+1,
+        articles: parsedData.articles
+      })
+    }
+  }
   render() {
     return (
       <div className="container my-3">
@@ -29,6 +58,10 @@ export class News extends Component {
       </div>
         })}
        
+        </div>
+        <div className="container d-flex justify-content=between">
+          <button disabled={this.state.page<=1} type="button" class="btn btn-dark" onclick={this.handlePrevClick}>&larr;Previous</button>
+          <button type="button" className="btn btn-dark" onclick={this.handleNextClick}>Next &rarr;</button>
         </div>
         </div>
         
